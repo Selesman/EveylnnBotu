@@ -1,17 +1,10 @@
 const ayarlar = require('../ayarlar.json');
-let talkedRecently = new Set();
-module.exports = message => {
-  if (talkedRecently.has(message.author.id)) {
-    return;
-  }
-  talkedRecently.add(message.author.id);
-	setTimeout(() => {
-    talkedRecently.delete(message.author.id);
-  }, 2500);
+module.exports = async message => {
   let client = message.client;
+  let prefix = await require('quick.db').fetch(`prefix_${message.guild.id}`) || ayarlar.prefix
   if (message.author.bot) return;
-  if (!message.content.startsWith(ayarlar.prefix)) return;
-  let command = message.content.split(' ')[0].slice(ayarlar.prefix.length);
+  if (!message.content.startsWith(prefix)) return;
+  let command = message.content.split(' ')[0].slice(prefix.length);
   let params = message.content.split(' ').slice(1);
   let perms = client.elevation(message);
   let cmd;
@@ -25,4 +18,4 @@ module.exports = message => {
     cmd.run(client, message, params, perms);
   }
 
-};
+}
